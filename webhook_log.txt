@@ -1,0 +1,26 @@
+{"update_id":16,"message":{"message_id":27,"from":{"id":1669321850,"is_bot":false,"first_name":"A","last_name":""},"date":1760705459,"chat":{"id":1669321850,"type":"private","first_name":"A"},"text":"سلام"}}
+
+{"update_id":17,"message":{"message_id":29,"from":{"id":1669321850,"is_bot":false,"first_name":"A","last_name":""},"date":1760705462,"chat":{"id":1669321850,"type":"private","first_name":"A"},"text":"۰"}}
+
+{"update_id":18,"message":{"message_id":31,"from":{"id":1669321850,"is_bot":false,"first_name":"A","last_name":""},"date":1760705471,"chat":{"id":1669321850,"type":"private","first_name":"A"},"text":"09169595184"}}
+
+{"update_id":19,"message":{"message_id":33,"from":{"id":1669321850,"is_bot":false,"first_name":"A","last_name":""},"date":1760705480,"chat":{"id":1669321850,"type":"private","first_name":"A"},"text":"09024517421"}}
+
+{"update_id":20,"message":{"message_id":35,"from":{"id":1669321850,"is_bot":false,"first_name":"A","last_name":""},"date":1760705490,"chat":{"id":1669321850,"type":"private","first_name":"A"},"text":"773703"}}
+
+{"update_id":21,"message":{"message_id":37,"from":{"id":1507116329,"is_bot":false,"first_name":"علی رضا میربیک","last_name":"","username":"alirezamirbeik"},"date":1760706906,"chat":{"id":1507116329,"type":"private","username":"alirezamirbeik","first_name":"علی رضا میربیک"},"text":"سلام"}}
+
+{"update_id":22,"message":{"message_id":39,"from":{"id":1507116329,"is_bot":false,"first_name":"علی رضا میربیک","last_name":"","username":"alirezamirbeik"},"date":1760706911,"chat":{"id":1507116329,"type":"private","username":"alirezamirbeik","first_name":"علی رضا میربیک"},"text":"0"}}
+
+{"update_id":23,"message":{"message_id":41,"from":{"id":1507116329,"is_bot":false,"first_name":"علی رضا میربیک","last_name":"","username":"alirezamirbeik"},"date":1760706921,"chat":{"id":1507116329,"type":"private","username":"alirezamirbeik","first_name":"علی رضا میربیک"},"text":"09123456789"}}
+
+{"update_id":24,"message":{"message_id":43,"from":{"id":1507116329,"is_bot":false,"first_name":"علی رضا میربیک","last_name":"","username":"alirezamirbeik"},"date":1760709451,"chat":{"id":1507116329,"type":"private","username":"alirezamirbeik","first_name":"علی رضا میربیک"},"text":"09024517421"}}
+
+{"update_id":25,"message":{"message_id":46,"from":{"id":1507116329,"is_bot":false,"first_name":"علی رضا میربیک","last_name":"","username":"alirezamirbeik"},"date":1760778284,"chat":{"id":1507116329,"type":"private","username":"alirezamirbeik","first_name":"علی رضا میربیک"},"text":"09357290573"}}
+
+{"update_id":26,"message":{"message_id":48,"from":{"id":1507116329,"is_bot":false,"first_name":"علی رضا میربیک","last_name":"","username":"alirezamirbeik"},"date":1760778294,"chat":{"id":1507116329,"type":"private","username":"alirezamirbeik","first_name":"علی رضا میربیک"},"text":"09357290573"}}
+
+{"update_id":27,"message":{"message_id":50,"from":{"id":230205393,"is_bot":false,"first_name":"ریاحی","last_name":"","username":"riahi61"},"date":1760785830,"chat":{"id":230205393,"type":"private","username":"riahi61","first_name":"ریاحی"},"text":"/start","entities":[{"type":"bot_command","offset":0,"length":6}]}}
+
+{"update_id":28,"message":{"message_id":52,"from":{"id":230205393,"is_bot":false,"first_name":"ریاحی","last_name":"","username":"riahi61"},"date":1760785856,"chat":{"id":230205393,"type":"private","username":"riahi61","first_name":"ریاحی"},"text":"09385866259"}}
+

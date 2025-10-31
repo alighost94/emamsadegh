@@ -1,0 +1,19 @@
+{
+    "name": "art-school/emamsadegh",
+    "description": "Art School Management System",
+    "type": "project",
+    "require": {
+        "tecnickcom/tcpdf": "^6.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Art School",
+            "email": "admin@emamsadegh.com"
+        }
+    ]
+}

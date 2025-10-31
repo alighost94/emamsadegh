@@ -1,0 +1,10 @@
+RewriteEngine On
+
+# اگر فایل یا پوشه وجود دارد، مستقیماً به آن دسترسی بده
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# در غیر این صورت همه چیز را به index.php هدایت کن
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+#اچ تی رو دستکاری کردم و تو فولدر پابلیک یه اچ تی دیگه جهت کنترل دقیق تر ساختم
