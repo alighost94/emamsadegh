@@ -34,100 +34,97 @@ class StudentAttendance extends Model {
             $data['notes']
         ]);
     }
+public function getAttendanceByTeacher($teacher_id, $course_id = null, $date = null, $limit = 100, $page = 1) {
+    $offset = ($page - 1) * $limit;
     
-    public function getAttendanceByTeacher($teacher_id, $course_id = null, $date = null, $limit = 100, $page = 1) {
-        $offset = ($page - 1) * $limit;
-        
-        // کوئری بهینه‌شده با Subquery
-        $query = "
-            SELECT 
-                sa.id,
-                sa.student_id,
-                sa.attendance_date,
-                sa.jalali_date, 
-                sa.status,
-                sa.notes,
-                sa.created_at,
-                s.student_number,
-                (SELECT CONCAT(first_name, ' ', last_name) FROM users WHERE id = s.user_id) as student_name,
-                c.course_code,
-                c.name AS course_name,
-                (SELECT CONCAT(first_name, ' ', last_name) FROM users WHERE id = 
-                    (SELECT user_id FROM teachers WHERE id = sa.teacher_id)
-                ) as teacher_name
-            FROM {$this->table} AS sa
-            INNER JOIN students AS s ON sa.student_id = s.id
-            INNER JOIN courses AS c ON sa.course_id = c.id
-            WHERE sa.teacher_id = ?
-        ";
-        
-        $params = [$teacher_id];
-        
-        if ($course_id !== null) {
-            $query .= " AND sa.course_id = ?";
-            $params[] = $course_id;
-        }
-        
-        if ($date !== null) {
-            $query .= " AND sa.attendance_date = ?";
-            $params[] = $date;
-        }
-        
-        $query .= " ORDER BY sa.attendance_date DESC, sa.id DESC
-                    LIMIT $limit OFFSET $offset";
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // کوئری بهینه‌شده با Subquery
+    $query = "
+        SELECT 
+            sa.id,
+            sa.student_id,
+            sa.attendance_date,
+            sa.jalali_date, 
+            sa.status,
+            sa.notes,
+            sa.created_at,
+            s.student_number,
+            (SELECT CONCAT(first_name, ' ', last_name) FROM users WHERE id = s.user_id) as student_name,
+            c.course_code,
+            c.name AS course_name,
+            (SELECT CONCAT(first_name, ' ', last_name) FROM users WHERE id = 
+                (SELECT user_id FROM teachers WHERE id = sa.teacher_id)
+            ) as teacher_name
+        FROM {$this->table} AS sa
+        INNER JOIN students AS s ON sa.student_id = s.id
+        INNER JOIN courses AS c ON sa.course_id = c.id
+        WHERE sa.teacher_id = ?
+    ";
+    
+    $params = [$teacher_id];
+    
+    if ($course_id !== null) {
+        $query .= " AND sa.course_id = ?";
+        $params[] = $course_id;
     }
     
-    public function getStudentsForAttendance($teacher_id, $course_id, $class_id = null) {
-        // استفاده از کش برای اطلاعات درس
-        $course = $this->getCachedData(
-            "course_{$course_id}", 
-            function() use ($course_id) {
-                $query = "SELECT major_id, grade_id FROM courses WHERE id = ?";
-                $stmt = $this->db->prepare($query);
-                $stmt->execute([$course_id]);
-                return $stmt->fetch(PDO::FETCH_ASSOC);
-            }, 
-            7200 // 2 ساعت کش
-        );
-        
-        if (!$course) {
-            return [];
-        }
-        
-        $query = "SELECT s.id, s.user_id, u.first_name, u.last_name, s.student_number,
-                         cl.name as class_name, cl.id as class_id
-                  FROM students s
-                  INNER JOIN users u ON s.user_id = u.id
-                  INNER JOIN classes cl ON s.class_id = cl.id
-                  WHERE cl.major_id = ? AND cl.grade_id = ?";
-        
-        $params = [$course['major_id'], $course['grade_id']];
-        
-        if ($class_id) {
-            $query .= " AND s.class_id = ?";
-            $params[] = $class_id;
-        } else {
-            $query .= " AND EXISTS (
-                SELECT 1 FROM teacher_courses tc 
-                WHERE tc.teacher_id = ? AND tc.course_id = ? 
-                AND tc.class_id = s.class_id
-            )";
-            $params[] = $teacher_id;
-            $params[] = $course_id;
-        }
-        
-        $query .= " ORDER BY cl.name, u.first_name, u.last_name";
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($date !== null) {
+        $query .= " AND sa.attendance_date = ?";
+        $params[] = $date;
     }
-
-
+    
+    $query .= " ORDER BY sa.attendance_date DESC, sa.id DESC
+                LIMIT $limit OFFSET $offset";
+    
+    $stmt = $this->db->prepare($query);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+    
+public function getStudentsForAttendance($teacher_id, $course_id, $class_id = null) {
+    // استفاده از کش برای اطلاعات درس
+    $course = $this->getCachedData(
+        "course_{$course_id}", 
+        function() use ($course_id) {
+            $query = "SELECT major_id, grade_id FROM courses WHERE id = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([$course_id]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        }, 
+        7200 // 2 ساعت کش
+    );
+    
+    if (!$course) {
+        return [];
+    }
+    
+    $query = "SELECT s.id, s.user_id, u.first_name, u.last_name, s.student_number,
+                     cl.name as class_name, cl.id as class_id
+              FROM students s
+              INNER JOIN users u ON s.user_id = u.id
+              INNER JOIN classes cl ON s.class_id = cl.id
+              WHERE cl.major_id = ? AND cl.grade_id = ?";
+    
+    $params = [$course['major_id'], $course['grade_id']];
+    
+    if ($class_id) {
+        $query .= " AND s.class_id = ?";
+        $params[] = $class_id;
+    } else {
+        $query .= " AND EXISTS (
+            SELECT 1 FROM teacher_courses tc 
+            WHERE tc.teacher_id = ? AND tc.course_id = ? 
+            AND tc.class_id = s.class_id
+        )";
+        $params[] = $teacher_id;
+        $params[] = $course_id;
+    }
+    
+    $query .= " ORDER BY cl.name, u.first_name, u.last_name";
+    
+    $stmt = $this->db->prepare($query);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 // این متد جدید رو اضافه کن
 public function recordBatchAttendance($attendance_data) {
     if (empty($attendance_data)) {

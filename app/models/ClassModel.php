@@ -56,46 +56,5 @@ public function getClassName($class_id) {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     return $result ? $result['name'] : 'نامشخص';
 }
-
-
-// 🔥 متد جدید برای دریافت کلاس‌های یک پایه خاص با جزئیات
-public function getClassesByGradeWithDetails($grade_id) {
-    $query = "SELECT c.*, m.name as major_name, g.name as grade_name,
-                     (SELECT COUNT(*) FROM students WHERE class_id = c.id) as student_count,
-                     c.capacity
-              FROM classes c
-              JOIN majors m ON c.major_id = m.id
-              JOIN grades g ON c.grade_id = g.id
-              WHERE c.grade_id = ?
-              ORDER BY m.name, c.name";
-    $stmt = $this->db->prepare($query);
-    $stmt->execute([$grade_id]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-// 🔥 متد جدید برای بررسی ظرفیت کلاس
-public function hasCapacity($class_id) {
-    $query = "SELECT c.capacity, 
-                     (SELECT COUNT(*) FROM students WHERE class_id = c.id) as current_count
-              FROM classes c
-              WHERE c.id = ?";
-    $stmt = $this->db->prepare($query);
-    $stmt->execute([$class_id]);
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    return $result && ($result['current_count'] < $result['capacity']);
-}
-public function getByGrade($grade_id) {
-    $query = "SELECT c.*, m.name as major_name, g.name as grade_name,
-                     (SELECT COUNT(*) FROM students WHERE class_id = c.id) as student_count
-              FROM classes c
-              JOIN majors m ON c.major_id = m.id
-              JOIN grades g ON c.grade_id = g.id
-              WHERE c.grade_id = ?
-              ORDER BY m.name, c.name";
-    $stmt = $this->db->prepare($query);
-    $stmt->execute([$grade_id]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 }
 ?>

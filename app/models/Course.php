@@ -26,8 +26,7 @@ class Course extends Model {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    // اضافه کردن این متد به کلاس Course
+	// اضافه کردن این متد به کلاس Course
 public function searchCourses($filters = []) {
     $query = "SELECT c.*, m.name as major_name, g.name as grade_name 
               FROM courses c 

@@ -1,10 +1,11 @@
 <?php
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('log_errors', 1);
+//ini_set('error_log', 'error_log.txt');
 session_start();
 // تعریف ثابت BASE_URL
-define('BASE_URL', 'http://localhost/emamsadegh/');
+define('BASE_URL', 'https://nazmeno.ir/emamsadegh/');
 require_once 'vendor/autoload.php';
 if (ob_get_length()) {
     ob_end_clean();

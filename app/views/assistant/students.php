@@ -118,27 +118,6 @@
             padding: 2px 4px;
             border-radius: 3px;
         }
-
-        /* استایل‌های Modal */
-        .modal-header { border-bottom: 2px solid #dee2e6; }
-        .modal-footer { border-top: 1px solid #dee2e6; }
-        .form-label .text-danger { font-size: 0.8rem; }
-        .is-invalid { border-color: #dc3545 !important; }
-        .is-valid { border-color: #198754 !important; }
-
-        /* انیمیشن برای Modal */
-        .modal.fade .modal-dialog {
-            transition: transform 0.3s ease-out;
-            transform: translate(0, -50px);
-        }
-        .modal.show .modal-dialog {
-            transform: none;
-        }
-
-        /* استایل برای ظرفیت کلاس */
-        .capacity-full { color: #dc3545; font-weight: bold; }
-        .capacity-warning { color: #fd7e14; }
-        .capacity-good { color: #198754; }
     </style>
 </head>
 <body>
@@ -158,16 +137,9 @@
             <!-- محتوای اصلی -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">
-                        <i class="bi bi-people"></i>
-                        مدیریت دانش‌آموزان پایه <?php echo $data['assistant']['grade_name']; ?>
-                    </h1>
+                    <h1 class="h2">مدیریت دانش‌آموزان پایه <?php echo $data['assistant']['grade_name']; ?></h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
-                            <!-- دکمه افزودن دانش‌آموز جدید -->
-                            <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addStudentModal">
-                                <i class="bi bi-person-plus"></i> افزودن دانش‌آموز
-                            </button>
                             <a href="<?php echo BASE_URL; ?>assistant/disciplinary" class="btn btn-sm btn-outline-danger">
                                 <i class="bi bi-shield-exclamation"></i> ثبت تخلف انضباطی
                             </a>
@@ -175,26 +147,16 @@
                     </div>
                 </div>
 
-                <!-- پیام‌های موفقیت و خطا -->
                 <?php if (isset($_SESSION['success'])): ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="bi bi-check-circle"></i>
                         <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                <?php endif; ?>
-
-                <?php if (isset($_SESSION['error'])): ?>
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 <?php endif; ?>
 
                 <!-- فیلتر کلاس -->
                 <div class="card mb-4">
-                    <div class="card-header bg-light">
+                    <div class="card-header">
                         <h5 class="mb-0"><i class="bi bi-funnel"></i> فیلتر بر اساس کلاس</h5>
                     </div>
                     <div class="card-body">
@@ -203,18 +165,9 @@
                                 <select class="form-select" onchange="window.location.href='<?php echo BASE_URL; ?>assistant/students?class_id=' + this.value">
                                     <option value="">همه کلاس‌ها</option>
                                     <?php foreach ($data['classes'] as $class): ?>
-                                        <?php 
-                                        $capacity_class = 'capacity-good';
-                                        if ($class['student_count'] >= $class['capacity']) {
-                                            $capacity_class = 'capacity-full';
-                                        } elseif ($class['student_count'] >= $class['capacity'] * 0.8) {
-                                            $capacity_class = 'capacity-warning';
-                                        }
-                                        ?>
                                         <option value="<?php echo $class['id']; ?>" 
                                                 <?php echo $data['selected_class'] == $class['id'] ? 'selected' : ''; ?>>
-                                            <?php echo $class['name'] . ' - ' . $class['major_name']; ?>
-                                            (<?php echo $class['student_count']; ?>/<?php echo $class['capacity']; ?>)
+                                            <?php echo $class['name'] . ' - ' . $class['major_name'] . ' (' . $class['student_count'] . ' دانش‌آموز)'; ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -226,9 +179,6 @@
                                         نمایش 
                                         <strong><?php echo count($data['students']); ?></strong> 
                                         دانش‌آموز
-                                        <?php if ($data['selected_class']): ?>
-                                            در کلاس انتخاب شده
-                                        <?php endif; ?>
                                     </span>
                                     <a href="<?php echo BASE_URL; ?>assistant/attendance" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-clipboard-check"></i> مشاهده حضور و غیاب
@@ -241,7 +191,7 @@
 
                 <!-- جستجوی لایو -->
                 <div class="card mb-4">
-                    <div class="card-header bg-light">
+                    <div class="card-header">
                         <h5 class="mb-0"><i class="bi bi-search"></i> جستجوی پیشرفته</h5>
                     </div>
                     <div class="card-body">
@@ -264,9 +214,6 @@
                                         دانش‌آموز
                                     </span>
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addStudentModal">
-                                            <i class="bi bi-person-plus"></i> افزودن
-                                        </button>
                                         <a href="<?php echo BASE_URL; ?>assistant/attendance" class="btn btn-sm btn-outline-primary">
                                             <i class="bi bi-clipboard-check"></i> حضور و غیاب
                                         </a>
@@ -279,45 +226,44 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- دکمه‌های خروجی -->
-                <div class="card mb-4">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0"><i class="bi bi-download"></i> خروجی‌ها</h5>
+<!-- دکمه‌های خروجی -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-download"></i> خروجی‌ها</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="text-muted mb-2">خروجی از کلاس انتخاب شده:</p>
+                <?php if ($data['selected_class']): ?>
+                    <?php 
+                    $selected_class_name = '';
+                    foreach ($data['classes'] as $class) {
+                        if ($class['id'] == $data['selected_class']) {
+                            $selected_class_name = $class['name'];
+                            break;
+                        }
+                    }
+                    ?>
+                    <div class="btn-group">
+                        <a href="<?php echo BASE_URL; ?>assistant/exportStudentsPDF?class_id=<?php echo $data['selected_class']; ?>" 
+                           class="btn btn-danger" target="_blank">
+                            <i class="bi bi-file-pdf"></i> خروجی PDF
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>assistant/exportStudentsExcel?class_id=<?php echo $data['selected_class']; ?>" 
+                           class="btn btn-success">
+                            <i class="bi bi-file-excel"></i> خروجی Excel
+                        </a>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p class="text-muted mb-2">خروجی از کلاس انتخاب شده:</p>
-                                <?php if ($data['selected_class']): ?>
-                                    <?php 
-                                    $selected_class_name = '';
-                                    foreach ($data['classes'] as $class) {
-                                        if ($class['id'] == $data['selected_class']) {
-                                            $selected_class_name = $class['name'];
-                                            break;
-                                        }
-                                    }
-                                    ?>
-                                    <div class="btn-group">
-                                        <a href="<?php echo BASE_URL; ?>assistant/exportStudentsPDF?class_id=<?php echo $data['selected_class']; ?>" 
-                                           class="btn btn-danger" target="_blank">
-                                            <i class="bi bi-file-pdf"></i> خروجی PDF
-                                        </a>
-                                        <a href="<?php echo BASE_URL; ?>assistant/exportStudentsExcel?class_id=<?php echo $data['selected_class']; ?>" 
-                                           class="btn btn-success">
-                                            <i class="bi bi-file-excel"></i> خروجی Excel
-                                        </a>
-                                    </div>
-                                    <small class="text-muted mt-2 d-block">کلاس: <?php echo $selected_class_name; ?></small>
-                                <?php else: ?>
-                                    <p class="text-warning">لطفاً ابتدا یک کلاس انتخاب کنید</p>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                    <small class="text-muted mt-2 d-block">کلاس: <?php echo $selected_class_name; ?></small>
+                <?php else: ?>
+                    <p class="text-warning">لطفاً ابتدا یک کلاس انتخاب کنید</p>
+                <?php endif; ?>
+            </div>
+  
+        </div>
+    </div>
+</div>
                 <!-- لیست دانش‌آموزان -->
                 <div class="row" id="studentsContainer">
                     <?php foreach ($data['students'] as $student): ?>
@@ -386,10 +332,7 @@
                     <div class="alert alert-info text-center py-4">
                         <i class="bi bi-info-circle display-4"></i>
                         <h5 class="mt-3">هیچ دانش‌آموزی یافت نشد.</h5>
-                        <p class="text-muted">لطفا فیلترهای جستجو را تغییر دهید یا دانش‌آموز جدیدی اضافه کنید.</p>
-                        <button type="button" class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#addStudentModal">
-                            <i class="bi bi-person-plus"></i> افزودن اولین دانش‌آموز
-                        </button>
+                        <p class="text-muted">لطفا فیلترهای جستجو را تغییر دهید.</p>
                     </div>
                 <?php endif; ?>
 
@@ -398,144 +341,8 @@
                     <i class="bi bi-search display-4"></i>
                     <h5 class="mt-3">هیچ دانش‌آموزی مطابق با جستجوی شما یافت نشد.</h5>
                     <p class="text-muted">لطفا عبارت جستجو را تغییر دهید.</p>
-                    <button type="button" class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#addStudentModal">
-                        <i class="bi bi-person-plus"></i> افزودن دانش‌آموز جدید
-                    </button>
                 </div>
             </main>
-        </div>
-    </div>
-
-    <!-- Modal افزودن دانش‌آموز -->
-    <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="addStudentModalLabel">
-                        <i class="bi bi-person-plus"></i> افزودن دانش‌آموز جدید
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="post" action="<?php echo BASE_URL; ?>assistant/addStudent">
-                    <div class="modal-body">
-                        <!-- اطلاعات دانش‌آموز -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <h6 class="text-success border-bottom pb-2">
-                                    <i class="bi bi-person"></i> اطلاعات دانش‌آموز
-                                </h6>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">نام <span class="text-danger">*</span></label>
-                                <input type="text" name="first_name" class="form-control" required value="<?= $_POST['first_name'] ?? '' ?>">
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">نام خانوادگی <span class="text-danger">*</span></label>
-                                <input type="text" name="last_name" class="form-control" required value="<?= $_POST['last_name'] ?? '' ?>">
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">شماره موبایل <span class="text-danger">*</span></label>
-                                <input type="text" name="mobile" class="form-control" required value="<?= $_POST['mobile'] ?? '' ?>">
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">کد ملی <span class="text-danger">*</span></label>
-                                <input type="text" name="national_code" class="form-control" required value="<?= $_POST['national_code'] ?? '' ?>">
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">تاریخ تولد</label>
-                                <input type="date" name="birth_date" class="form-control" value="<?= $_POST['birth_date'] ?? '' ?>">
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">نام پدر</label>
-                                <input type="text" name="father_name" class="form-control" value="<?= $_POST['father_name'] ?? '' ?>">
-                            </div>
-                            
-                            <div class="col-12 mb-3">
-                                <label class="form-label">آدرس</label>
-                                <textarea name="address" class="form-control" rows="2"><?= $_POST['address'] ?? '' ?></textarea>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">کلاس <span class="text-danger">*</span></label>
-                                <select name="class_id" class="form-select" required>
-                                    <option value="">انتخاب کلاس</option>
-                                    <?php foreach ($data['classes'] as $class): ?>
-                                        <?php 
-                                        $capacity_class = 'capacity-good';
-                                        if ($class['student_count'] >= $class['capacity']) {
-                                            $capacity_class = 'capacity-full';
-                                        } elseif ($class['student_count'] >= $class['capacity'] * 0.8) {
-                                            $capacity_class = 'capacity-warning';
-                                        }
-                                        ?>
-                                        <option value="<?php echo $class['id']; ?>" 
-                                                class="<?php echo $capacity_class; ?>"
-                                                <?= (isset($_POST['class_id']) && $_POST['class_id'] == $class['id']) ? 'selected' : '' ?>>
-                                            <?php echo $class['name']; ?> - <?php echo $class['major_name']; ?>
-                                            (ظرفیت: <?php echo $class['student_count']; ?>/<?php echo $class['capacity']; ?>)
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <small class="form-text text-muted">
-                                    فقط کلاس‌های پایه <?= $data['assistant']['grade_name'] ?> نمایش داده می‌شوند
-                                </small>
-                            </div>
-                        </div>
-
-                        <!-- اطلاعات اولیا -->
-                        <div class="row">
-                            <div class="col-12">
-                                <h6 class="text-info border-bottom pb-2">
-                                    <i class="bi bi-people"></i> اطلاعات اولیا (اختیاری)
-                                </h6>
-                            </div>
-                            
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">نسبت</label>
-                                <select name="relation_type" class="form-select">
-                                    <option value="father" <?= (isset($_POST['relation_type']) && $_POST['relation_type'] == 'father') ? 'selected' : '' ?>>پدر</option>
-                                    <option value="mother" <?= (isset($_POST['relation_type']) && $_POST['relation_type'] == 'mother') ? 'selected' : '' ?>>مادر</option>
-                                    <option value="guardian" <?= (isset($_POST['relation_type']) && $_POST['relation_type'] == 'guardian') ? 'selected' : '' ?>>سرپرست</option>
-                                </select>
-                            </div>
-                            
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">نام ولی</label>
-                                <input type="text" name="parent_first_name" class="form-control" value="<?= $_POST['parent_first_name'] ?? '' ?>">
-                            </div>
-                            
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">نام خانوادگی ولی</label>
-                                <input type="text" name="parent_last_name" class="form-control" value="<?= $_POST['parent_last_name'] ?? '' ?>">
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">شماره موبایل ولی</label>
-                                <input type="text" name="parent_mobile" class="form-control" value="<?= $_POST['parent_mobile'] ?? '' ?>">
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">کد ملی ولی</label>
-                                <input type="text" name="parent_national_code" class="form-control" value="<?= $_POST['parent_national_code'] ?? '' ?>">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="bi bi-x-circle"></i> انصراف
-                        </button>
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-check-lg"></i> ثبت دانش‌آموز
-                        </button>
-                    </div>
-                </form>
-            </div>
         </div>
     </div>
 
@@ -663,61 +470,6 @@
         }
 
         updateScoreIndicators();
-
-        // مدیریت Modal افزودن دانش‌آموز
-        const addStudentModal = document.getElementById('addStudentModal');
-        
-        if (addStudentModal) {
-            // ریست کردن فرم هنگام بستن modal
-            addStudentModal.addEventListener('hidden.bs.modal', function () {
-                const form = this.querySelector('form');
-                form.reset();
-                
-                // پاک کردن پیام‌های خطا
-                const errorAlerts = this.querySelectorAll('.alert.alert-danger');
-                errorAlerts.forEach(alert => alert.remove());
-            });
-            
-            // اعتبارسنجی فرم
-            const form = addStudentModal.querySelector('form');
-            form.addEventListener('submit', function(e) {
-                const requiredFields = this.querySelectorAll('[required]');
-                let isValid = true;
-                
-                requiredFields.forEach(field => {
-                    if (!field.value.trim()) {
-                        isValid = false;
-                        field.classList.add('is-invalid');
-                    } else {
-                        field.classList.remove('is-invalid');
-                    }
-                });
-                
-                if (!isValid) {
-                    e.preventDefault();
-                    // نمایش پیام خطا
-                    const alertDiv = document.createElement('div');
-                    alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
-                    alertDiv.innerHTML = `
-                        <i class="bi bi-exclamation-triangle"></i>
-                        لطفاً فیلدهای ضروری را پر کنید.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    `;
-                    this.querySelector('.modal-body').prepend(alertDiv);
-                }
-            });
-        }
-        
-        // نمایش اطلاعات کلاس در modal
-        const classSelect = document.querySelector('select[name="class_id"]');
-        if (classSelect) {
-            classSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                if (selectedOption.value) {
-                    console.log('کلاس انتخاب شده:', selectedOption.text);
-                }
-            });
-        }
     });
     </script>
 </body>

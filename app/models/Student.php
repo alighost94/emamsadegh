@@ -98,15 +98,15 @@ class Student extends Model {
     }
     
     // متد برای دریافت دانش‌آموزان یک کلاس خاص
-    public function getStudentsByClass($class_id) {
-        $query = "SELECT s.*, u.first_name, u.last_name, u.national_code
-                  FROM students s 
-                  JOIN users u ON s.user_id = u.id 
-                  WHERE s.class_id = ? 
-                  ORDER BY u.last_name, u.first_name"; // تغییر: اول بر اساس نام خانوادگی سپس نام
-        $stmt = $this->db->prepare($query);
-        $stmt->execute([$class_id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+public function getStudentsByClass($class_id) {
+    $query = "SELECT s.*, u.first_name, u.last_name, u.national_code
+              FROM students s 
+              JOIN users u ON s.user_id = u.id 
+              WHERE s.class_id = ? 
+              ORDER BY u.last_name, u.first_name"; // تغییر: اول بر اساس نام خانوادگی سپس نام
+    $stmt = $this->db->prepare($query);
+    $stmt->execute([$class_id]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }
 ?>

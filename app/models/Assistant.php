@@ -46,30 +46,30 @@ class Assistant extends Model {
         return $stmt->execute([$assistant_id]);
     }
     
-    public function getStudentsByGrade($grade_id, $class_id = null) {
-        $query = "SELECT s.*, u.first_name, u.last_name, u.mobile, s.student_number,
-                         c.name as class_name, m.name as major_name,
-                         ds.current_score as disciplinary_score
-                  FROM students s
-                  JOIN users u ON s.user_id = u.id
-                  JOIN classes c ON s.class_id = c.id
-                  JOIN majors m ON c.major_id = m.id
-                  LEFT JOIN disciplinary_scores ds ON s.id = ds.student_id
-                  WHERE c.grade_id = ?";
-        
-        $params = [$grade_id];
-        
-        if ($class_id) {
-            $query .= " AND s.class_id = ?";
-            $params[] = $class_id;
-        }
-        
-        $query .= " ORDER BY u.last_name, u.first_name"; // تغییر: اول بر اساس نام خانوادگی سپس نام
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+public function getStudentsByGrade($grade_id, $class_id = null) {
+    $query = "SELECT s.*, u.first_name, u.last_name, u.mobile, s.student_number,
+                     c.name as class_name, m.name as major_name,
+                     ds.current_score as disciplinary_score
+              FROM students s
+              JOIN users u ON s.user_id = u.id
+              JOIN classes c ON s.class_id = c.id
+              JOIN majors m ON c.major_id = m.id
+              LEFT JOIN disciplinary_scores ds ON s.id = ds.student_id
+              WHERE c.grade_id = ?";
+    
+    $params = [$grade_id];
+    
+    if ($class_id) {
+        $query .= " AND s.class_id = ?";
+        $params[] = $class_id;
     }
+    
+    $query .= " ORDER BY u.last_name, u.first_name"; // تغییر: اول بر اساس نام خانوادگی سپس نام
+    
+    $stmt = $this->db->prepare($query);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
     
     public function getClassesByGrade($grade_id) {
         $query = "SELECT c.*, m.name as major_name, 

@@ -81,11 +81,6 @@ $user_name = $data['user_name'];
                 </a>
             </li>
             <li class="nav-item">
-    <a class="nav-link" href="<?= BASE_URL ?>assistant/addStudent">
-        <i class="fas fa-user-plus"></i> افزودن دانش‌آموز
-    </a>
-</li>
-            <li class="nav-item">
                 <a class="nav-link text-white" href="<?php echo BASE_URL; ?>auth/logout">
                     <i class="bi bi-box-arrow-left"></i> خروج
                 </a>

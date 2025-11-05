@@ -15,8 +15,7 @@ class AssistantController extends Controller {
         $this->gradeModel = $this->model('Grade');
         $this->classModel = $this->model('ClassModel');
         $this->messageLogModel = $this->model('MessageLog');
-        $this->classModel = $this->model('User');
-
+        
         // بررسی تکمیل پروفایل
         $this->checkProfileCompletion();
     }
@@ -297,7 +296,23 @@ class AssistantController extends Controller {
         return $string;
     }
     
-
+    public function students() {
+        $assistant = $this->assistantModel->getByUserId($_SESSION['user_id']);
+        $class_id = $_GET['class_id'] ?? null;
+        
+        $students = $this->assistantModel->getStudentsByGrade($assistant['grade_id'], $class_id);
+        $classes = $this->assistantModel->getClassesByGrade($assistant['grade_id']);
+        
+        $data = [
+            'assistant' => $assistant,
+            'students' => $students,
+            'classes' => $classes,
+            'selected_class' => $class_id,
+            'user_name' => $_SESSION['first_name'] . ' ' . $_SESSION['last_name']
+        ];
+        
+        $this->view('assistant/students', $data);
+    }
     
     public function studentDetail($student_id = null) {
         // اگر student_id از URL دریافت نشد، از GET بگیر
@@ -1357,228 +1372,6 @@ public function exportStudentsExcel($class_id = null) {
         $this->redirect('assistant/students');
     }
 }
-public function addStudent() {
-    // بررسی دسترسی معاون
-    $assistant = $this->assistantModel->getByUserId($_SESSION['user_id']);
-    if (!$assistant) {
-        $this->redirect('assistant');
-        return;
-    }
-    
-    $data = [
-        'assistant' => $assistant,
-        // 🔥 استفاده از classModel
-        'classes' => $this->classModel->getByGrade($assistant['grade_id']),
-        'user_name' => $_SESSION['first_name'] . ' ' . $_SESSION['last_name']
-    ];
-    
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $studentData = [
-            'first_name' => trim($_POST['first_name']),
-            'last_name' => trim($_POST['last_name']),
-            'mobile' => trim($_POST['mobile']),
-            'national_code' => trim($_POST['national_code']),
-            'birth_date' => $_POST['birth_date'] ?: null,
-            'father_name' => trim($_POST['father_name'] ?? ''),
-            'address' => trim($_POST['address'] ?? ''),
-            'class_id' => $_POST['class_id']
-        ];
-        
-        $parentData = [
-            'parent_first_name' => trim($_POST['parent_first_name'] ?? ''),
-            'parent_last_name' => trim($_POST['parent_last_name'] ?? ''),
-            'parent_mobile' => trim($_POST['parent_mobile'] ?? ''),
-            'parent_national_code' => trim($_POST['parent_national_code'] ?? ''),
-            'relation_type' => $_POST['relation_type'] ?? 'father'
-        ];
-        
-        // 🔥 اعتبارسنجی داده‌ها
-        $validation = $this->validateStudentData($studentData);
-        if (!$validation['valid']) {
-            $data['error'] = $validation['message'];
-        }
-        // 🔥 اعتبارسنجی کلاس انتخابی
-        elseif (!$this->validateClassForAssistant($studentData['class_id'], $assistant['grade_id'])) {
-            $data['error'] = 'کلاس انتخاب شده معتبر نیست یا به پایه شما تعلق ندارد.';
-        } 
-        // 🔥 بررسی ظرفیت کلاس
-        elseif (!$this->classModel->hasCapacity($studentData['class_id'])) {
-            $data['error'] = 'ظرفیت کلاس انتخاب شده تکمیل است. لطفاً کلاس دیگری انتخاب کنید.';
-        } else {
-            // ایجاد دانش‌آموز و اولیا
-            $result = $this->createStudentWithParent($studentData, $parentData);
-            
-            if ($result['success']) {
-                // ثبت لاگ فعالیت
-                $this->logActivity(
-                    'create_student_with_parent', 
-                    'ثبت دانش‌آموز جدید و اولیا: ' . $studentData['first_name'] . ' ' . $studentData['last_name'],
-                    $result['student_id'],
-                    'students'
-                );
-                
-                $_SESSION['success'] = 'دانش‌آموز و اولیا با موفقیت ثبت شدند';
-                $this->redirect('assistant/students');
-                return;
-            } else {
-                $data['error'] = $result['error'];
-            }
-        }
-    }
-    
-    $this->view('assistant/students', $data);
-}
 
-// 🔥 متد اعتبارسنجی داده‌های دانش‌آموز
-private function validateStudentData($data) {
-    // بررسی فیلدهای ضروری
-    if (empty($data['first_name']) || empty($data['last_name']) || 
-        empty($data['mobile']) || empty($data['national_code']) || 
-        empty($data['class_id'])) {
-        return ['valid' => false, 'message' => 'لطفاً تمام فیلدهای ضروری را پر کنید.'];
-    }
-    
-    // بررسی فرمت موبایل
-    if (!preg_match('/^09[0-9]{9}$/', $data['mobile'])) {
-        return ['valid' => false, 'message' => 'فرمت شماره موبایل صحیح نیست.'];
-    }
-    
-    // بررسی فرمت کد ملی
-    if (!preg_match('/^[0-9]{10}$/', $data['national_code'])) {
-        return ['valid' => false, 'message' => 'فرمت کد ملی صحیح نیست.'];
-    }
-    
-    // بررسی تکراری نبودن موبایل
-    if ($this->isMobileExists($data['mobile'])) {
-        return ['valid' => false, 'message' => 'این شماره موبایل قبلاً ثبت شده است.'];
-    }
-    
-    // بررسی تکراری نبودن کد ملی
-    if ($this->isNationalCodeExists($data['national_code'])) {
-        return ['valid' => false, 'message' => 'این کد ملی قبلاً ثبت شده است.'];
-    }
-    
-    return ['valid' => true, 'message' => ''];
-}
-
-// 🔥 بررسی وجود موبایل در سیستم
-private function isMobileExists($mobile) {
-    $query = "SELECT id FROM users WHERE mobile = ?";
-    $stmt = $this->db->prepare($query);
-    $stmt->execute([$mobile]);
-    return $stmt->fetch(PDO::FETCH_ASSOC) !== false;
-}
-
-// 🔥 بررسی وجود کد ملی در سیستم
-private function isNationalCodeExists($national_code) {
-    $query = "SELECT id FROM users WHERE national_code = ?";
-    $stmt = $this->db->prepare($query);
-    $stmt->execute([$national_code]);
-    return $stmt->fetch(PDO::FETCH_ASSOC) !== false;
-}
-
-// 🔥 متد ایجاد دانش‌آموز و اولیا
-private function createStudentWithParent($studentData, $parentData) {
-    try {
-        $this->db->beginTransaction();
-        
-        // 1. ایجاد کاربر دانش‌آموز
-        $userData = [
-            'mobile' => $studentData['mobile'],
-            'national_code' => $studentData['national_code'],
-            'role_id' => 2, // دانش‌آموز
-            'first_name' => $studentData['first_name'],
-            'last_name' => $studentData['last_name']
-        ];
-        
-        if (!$this->userModel->create($userData)) {
-            throw new Exception('خطا در ایجاد کاربر دانش‌آموز');
-        }
-        
-        $student_user_id = $this->db->lastInsertId();
-        
-        // 2. ایجاد رکورد دانش‌آموز
-        $student_number = 'STU' . date('Y') . str_pad($student_user_id, 4, '0', STR_PAD_LEFT);
-        
-        $studentRecordData = [
-            'user_id' => $student_user_id,
-            'class_id' => $studentData['class_id'],
-            'student_number' => $student_number,
-            'birth_date' => $studentData['birth_date'],
-            'father_name' => $studentData['father_name'],
-            'address' => $studentData['address']
-        ];
-        
-        if (!$this->studentModel->create($studentRecordData)) {
-            throw new Exception('خطا در ایجاد رکورد دانش‌آموز');
-        }
-        
-        $student_id = $this->db->lastInsertId();
-        
-        // 3. ایجاد اولیا (اگر اطلاعات وارد شده)
-        if (!empty($parentData['parent_mobile']) && !empty($parentData['parent_first_name'])) {
-            $parentCreated = $this->createParentForStudent($parentData, $student_id);
-            if (!$parentCreated) {
-                // اگر ایجاد اولیا با مشکل مواجه شد، خطا ندهیم (اختیاری است)
-                // فقط در لاگ ثبت کنیم
-                error_log("خطا در ایجاد اولیا برای دانش‌آموز: " . $student_id);
-            }
-        }
-        
-        $this->db->commit();
-        return [
-            'success' => true,
-            'student_id' => $student_id,
-            'student_user_id' => $student_user_id
-        ];
-        
-    } catch (Exception $e) {
-        $this->db->rollBack();
-        return [
-            'success' => false,
-            'error' => $e->getMessage()
-        ];
-    }
-}
-
-// 🔥 متد ایجاد اولیا
-private function createParentForStudent($parentData, $student_id) {
-    // بررسی تکراری نبودن موبایل اولیا
-    if ($this->isMobileExists($parentData['parent_mobile'])) {
-        return false;
-    }
-    
-    // ایجاد کاربر اولیا
-    $parentUserData = [
-        'mobile' => $parentData['parent_mobile'],
-        'national_code' => $parentData['parent_national_code'],
-        'role_id' => 4, // اولیا
-        'first_name' => $parentData['parent_first_name'],
-        'last_name' => $parentData['parent_last_name']
-    ];
-    
-    if (!$this->userModel->create($parentUserData)) {
-        return false;
-    }
-    
-    $parent_user_id = $this->db->lastInsertId();
-    
-    // ایجاد رکورد اولیا
-    $parentRecordData = [
-        'user_id' => $parent_user_id,
-        'student_id' => $student_id,
-        'relation_type' => $parentData['relation_type'] ?? 'father'
-    ];
-    
-    return $this->parentModel->create($parentRecordData);
-}
-
-// 🔥 متد اعتبارسنجی کلاس
-private function validateClassForAssistant($class_id, $assistant_grade_id) {
-    $query = "SELECT id FROM classes WHERE id = ? AND grade_id = ?";
-    $stmt = $this->db->prepare($query);
-    $stmt->execute([$class_id, $assistant_grade_id]);
-    return $stmt->fetch(PDO::FETCH_ASSOC) !== false;
-}
 }
 ?>

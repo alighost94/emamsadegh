@@ -59,96 +59,95 @@ class PDFHelper extends \TCPDF {
     }
     
     // ایجاد جدول دانش‌آموزان با سایز کمی بزرگتر
-    public function createStudentsTable($header, $data, $class_info) {
-        // اطلاعات کلاس - کمی بزرگتر
-        $this->SetFont('vazir', 'B', 11);
-        $this->SetTextColor(58, 83, 155);
-        $this->Cell(0, 5, 'لیست دانش‌آموزان کلاس ' . $class_info['name'], 0, 1, 'R');
-        
-        $this->SetFont('vazir', '', 10);
-        $this->SetTextColor(0, 0, 0);
-        
-        $class_info_text = 'پایه: ' . $class_info['grade_name'] . 
-                          ' | رشته: ' . $class_info['major_name'] . 
-                          ' | تعداد: ' . $this->convertToPersianNumbers($class_info['student_count']) . ' نفر';
-        $this->Cell(0, 4, $class_info_text, 0, 1, 'R');
-        $this->Ln(3);
-        
-        // هدر جدول - کمی بزرگتر
-        $this->SetFillColor(58, 83, 155);
-        $this->SetTextColor(255);
-        $this->SetDrawColor(80, 80, 80);
-        $this->SetLineWidth(0.3);
-        $this->SetFont('vazir', 'B', 9);
-        
-        // عرض ستون‌ها - بهینه شده
-        $w = array(8, 25, 68, 48, 37); // ردیف، شماره دانش‌آموزی، نام و نام خانوادگی، نام پدر، توضیحات
-        
-        // هدر جدول
-        $this->Cell($w[4], 6, $header[4], 'LTRB', 0, 'C', 1);
-        $this->Cell($w[3], 6, $header[3], 'LTRB', 0, 'C', 1);
-        $this->Cell($w[2], 6, $header[2], 'LTRB', 0, 'C', 1);
-        $this->Cell($w[1], 6, $header[1], 'LTRB', 0, 'C', 1);
-        $this->Cell($w[0], 6, $header[0], 'LTRB', 0, 'C', 1);
-        $this->Ln();
-        
-        // داده‌ها - کمی بزرگتر
-        $this->SetFillColor(245, 247, 255);
-        $this->SetTextColor(0);
-        $this->SetFont('vazir', '', 9);
-        $this->SetDrawColor(100, 100, 100);
-        $this->SetLineWidth(0.2);
-        
-        $fill = false;
-        $counter = 1;
-        
-        foreach($data as $row) {
-            // چک کردن ارتفاع صفحه
-            if($this->GetY() + 6 > 275) {
-                $this->AddPage();
-                // هدر جدول در صفحه جدید
-                $this->SetFillColor(58, 83, 155);
-                $this->SetTextColor(255);
-                $this->SetFont('vazir', 'B', 9);
-                $this->SetDrawColor(80, 80, 80);
-                $this->SetLineWidth(0.3);
-                
-                $this->Cell($w[4], 6, $header[4], 'LTRB', 0, 'C', 1);
-                $this->Cell($w[3], 6, $header[3], 'LTRB', 0, 'C', 1);
-                $this->Cell($w[2], 6, $header[2], 'LTRB', 0, 'C', 1);
-                $this->Cell($w[1], 6, $header[1], 'LTRB', 0, 'C', 1);
-                $this->Cell($w[0], 6, $header[0], 'LTRB', 0, 'C', 1);
-                $this->Ln();
-                
-                $this->SetFillColor(245, 247, 255);
-                $this->SetTextColor(0);
-                $this->SetFont('vazir', '', 9);
-                $this->SetDrawColor(100, 100, 100);
-                $this->SetLineWidth(0.2);
-                $fill = false;
-            }
+public function createStudentsTable($header, $data, $class_info) {
+    // اطلاعات کلاس - کمی بزرگتر
+    $this->SetFont('vazir', 'B', 11);
+    $this->SetTextColor(58, 83, 155);
+    $this->Cell(0, 5, 'لیست دانش‌آموزان کلاس ' . $class_info['name'], 0, 1, 'R');
+    
+    $this->SetFont('vazir', '', 10);
+    $this->SetTextColor(0, 0, 0);
+    
+    $class_info_text = 'پایه: ' . $class_info['grade_name'] . 
+                      ' | رشته: ' . $class_info['major_name'] . 
+                      ' | تعداد: ' . $this->convertToPersianNumbers($class_info['student_count']) . ' نفر';
+    $this->Cell(0, 4, $class_info_text, 0, 1, 'R');
+    $this->Ln(3);
+    
+    // هدر جدول - کمی بزرگتر
+    $this->SetFillColor(58, 83, 155);
+    $this->SetTextColor(255);
+    $this->SetDrawColor(80, 80, 80);
+    $this->SetLineWidth(0.3);
+    $this->SetFont('vazir', 'B', 9);
+    
+    // عرض ستون‌ها - بهینه شده
+    $w = array(8, 25, 68, 48, 37); // ردیف، شماره دانش‌آموزی، نام و نام خانوادگی، نام پدر، توضیحات
+    
+    // هدر جدول
+    $this->Cell($w[4], 6, $header[4], 'LTRB', 0, 'C', 1);
+    $this->Cell($w[3], 6, $header[3], 'LTRB', 0, 'C', 1);
+    $this->Cell($w[2], 6, $header[2], 'LTRB', 0, 'C', 1);
+    $this->Cell($w[1], 6, $header[1], 'LTRB', 0, 'C', 1);
+    $this->Cell($w[0], 6, $header[0], 'LTRB', 0, 'C', 1);
+    $this->Ln();
+    
+    // داده‌ها - کمی بزرگتر
+    $this->SetFillColor(245, 247, 255);
+    $this->SetTextColor(0);
+    $this->SetFont('vazir', '', 9);
+    $this->SetDrawColor(100, 100, 100);
+    $this->SetLineWidth(0.2);
+    
+    $fill = false;
+    $counter = 1;
+    
+    foreach($data as $row) {
+        // چک کردن ارتفاع صفحه
+        if($this->GetY() + 6 > 275) {
+            $this->AddPage();
+            // هدر جدول در صفحه جدید
+            $this->SetFillColor(58, 83, 155);
+            $this->SetTextColor(255);
+            $this->SetFont('vazir', 'B', 9);
+            $this->SetDrawColor(80, 80, 80);
+            $this->SetLineWidth(0.3);
             
-            // آماده کردن داده‌ها - تغییر: اول نام خانوادگی سپس نام
-            $student_number = $this->convertToPersianNumbers($row['student_number'] ?? '-');
-            $full_name = $row['last_name'] . ' ' . $row['first_name']; // تغییر: اول نام خانوادگی
-            $father_name = $row['father_name'] ?? '-';
-            $description = $row['description'] ?? '';
-            
-            // ردیف داده با ارتفاع کمی بیشتر
-            $this->Cell($w[4], 6, $description, 'LTRB', 0, 'R', $fill);
-            $this->Cell($w[3], 6, $father_name, 'LTRB', 0, 'R', $fill);
-            $this->Cell($w[2], 6, $full_name, 'LTRB', 0, 'R', $fill);
-            $this->Cell($w[1], 6, $student_number, 'LTRB', 0, 'C', $fill);
-            $this->Cell($w[0], 6, $this->convertToPersianNumbers($counter), 'LTRB', 0, 'C', $fill);
+            $this->Cell($w[4], 6, $header[4], 'LTRB', 0, 'C', 1);
+            $this->Cell($w[3], 6, $header[3], 'LTRB', 0, 'C', 1);
+            $this->Cell($w[2], 6, $header[2], 'LTRB', 0, 'C', 1);
+            $this->Cell($w[1], 6, $header[1], 'LTRB', 0, 'C', 1);
+            $this->Cell($w[0], 6, $header[0], 'LTRB', 0, 'C', 1);
             $this->Ln();
             
-            $fill = !$fill;
-            $counter++;
+            $this->SetFillColor(245, 247, 255);
+            $this->SetTextColor(0);
+            $this->SetFont('vazir', '', 9);
+            $this->SetDrawColor(100, 100, 100);
+            $this->SetLineWidth(0.2);
+            $fill = false;
         }
         
-        $this->Ln(2);
+        // آماده کردن داده‌ها - تغییر: اول نام خانوادگی سپس نام
+        $student_number = $this->convertToPersianNumbers($row['student_number'] ?? '-');
+        $full_name = $row['last_name'] . ' ' . $row['first_name']; // تغییر: اول نام خانوادگی
+        $father_name = $row['father_name'] ?? '-';
+        $description = $row['description'] ?? '';
+        
+        // ردیف داده با ارتفاع کمی بیشتر
+        $this->Cell($w[4], 6, $description, 'LTRB', 0, 'R', $fill);
+        $this->Cell($w[3], 6, $father_name, 'LTRB', 0, 'R', $fill);
+        $this->Cell($w[2], 6, $full_name, 'LTRB', 0, 'R', $fill);
+        $this->Cell($w[1], 6, $student_number, 'LTRB', 0, 'C', $fill);
+        $this->Cell($w[0], 6, $this->convertToPersianNumbers($counter), 'LTRB', 0, 'C', $fill);
+        $this->Ln();
+        
+        $fill = !$fill;
+        $counter++;
     }
     
+    $this->Ln(2);
+}
     // تبدیل اعداد به فارسی
     private function convertToPersianNumbers($number) {
         $persian_numbers = array('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹');

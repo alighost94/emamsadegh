@@ -48,8 +48,7 @@ class TeacherCourse extends Model {
         $stmt->execute([$teacher_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    // اضافه کردن این متد به کلاس TeacherCourse
+	// اضافه کردن این متد به کلاس TeacherCourse
 public function assignMultipleCourses($teacher_id, $courses_data) {
     $this->db->beginTransaction();
     

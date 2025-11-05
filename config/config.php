@@ -1,5 +1,5 @@
 <?php
-define('BASE_URL', 'http://localhost/emamsadegh/');
+define('BASE_URL', 'https://nazmeno.ir/emamsadegh/');
 define('SITE_NAME', 'هنرستان امام صادق');
 
 // تنظیمات تاریخ شمسی

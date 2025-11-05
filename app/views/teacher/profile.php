@@ -194,35 +194,36 @@
                     </div>
                     <div class="card-body">
                         <form method="POST" enctype="multipart/form-data" id="profileForm" onsubmit="return validateForm()">
-                            <!-- فیلد مخفی برای is_retired با مقدار پیش‌فرض 0 -->
-                            <input type="hidden" name="is_retired" id="is_retired_hidden" value="0">
+                            <!-- فیلد مخفی برای is_retired -->
+                            <input type="hidden" name="is_retired" id="is_retired_hidden" value="<?php echo $data['profile']['is_retired'] ?? 0; ?>">
                             
                             <div class="row">
-                                <div class="col-md-4 text-center mb-4">
-                                    <div class="preview-container">
-                                        <label for="profile_image" class="d-block mb-3">
-                                            <?php if (!empty($data['profile']['profile_image'])): ?>
-                                                <img src="uploads/teachers/<?php echo $data['teacher']['id']; ?>/<?php echo $data['profile']['profile_image']; ?>" 
-                                                     class="profile-image" id="profile_preview" alt="پروفایل"
-                                                     onclick="showImageModal(this.src)">
-                                            <?php else: ?>
-                                                <div class="upload-placeholder" id="profile_placeholder" onclick="document.getElementById('profile_image').click()">
-                                                    <i class="bi bi-camera upload-icon"></i>
-                                                </div>
-                                                <img src="" class="profile-image" id="profile_preview" alt="پروفایل" 
-                                                     style="display: none;" onclick="showImageModal(this.src)">
-                                            <?php endif; ?>
-                                        </label>
-                                        <div class="preview-actions">
-                                            <button type="button" class="btn btn-sm btn-light" onclick="document.getElementById('profile_image').click()">
-                                                <i class="bi bi-camera"></i> تغییر عکس
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <input type="file" name="profile_image" id="profile_image" accept="image/*" class="d-none" onchange="previewImage(this, 'profile_preview', 'profile_placeholder')" required>
-                                    <div class="text-muted small file-required">عکس پرسنلی (حداکثر 2MB)</div>
-                                    <div class="error-message" id="profile_image_error"></div>
-                                </div>
+                         <!-- در بخش عکس پروفایل -->
+<div class="col-md-4 text-center mb-4">
+    <div class="preview-container">
+        <label for="profile_image" class="d-block mb-3">
+            <?php if (!empty($data['profile']['profile_image']) && file_exists('uploads/teachers/' . $data['teacher']['id'] . '/' . $data['profile']['profile_image'])): ?>
+                <img src="<?php echo BASE_URL . 'uploads/teachers/' . $data['teacher']['id'] . '/' . $data['profile']['profile_image']; ?>" 
+                     class="profile-image" id="profile_preview" alt="پروفایل"
+                     onclick="showImageModal(this.src)">
+            <?php else: ?>
+                <div class="upload-placeholder" id="profile_placeholder" onclick="document.getElementById('profile_image').click()">
+                    <i class="bi bi-camera upload-icon"></i>
+                </div>
+                <img src="" class="profile-image" id="profile_preview" alt="پروفایل" 
+                     style="display: none;" onclick="showImageModal(this.src)">
+            <?php endif; ?>
+        </label>
+        <div class="preview-actions">
+            <button type="button" class="btn btn-sm btn-light" onclick="document.getElementById('profile_image').click()">
+                <i class="bi bi-camera"></i> تغییر عکس
+            </button>
+        </div>
+    </div>
+    <input type="file" name="profile_image" id="profile_image" accept="image/*" class="d-none" onchange="previewImage(this, 'profile_preview', 'profile_placeholder')">
+    <div class="text-muted small file-required">عکس پرسنلی (حداکثر 2MB)</div>
+    <div class="error-message" id="profile_image_error"></div>
+</div>
                                 
                                 <div class="col-md-8">
                                     <div class="row">
@@ -346,75 +347,94 @@
                             
                             <h6 class="mb-3">بارگذاری مدارک</h6>
                             <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label file-required">تصویر کارت ملی</label>
-                                    <input type="file" name="national_card_image" class="form-control" accept="image/*" onchange="previewImage(this, 'national_card_preview', 'national_card_placeholder')" id="national_card_input" required>
-                                    <?php if (!empty($data['profile']['national_card_image'])): ?>
-                                        <div class="mt-2">
-                                            <img src="uploads/teachers/<?php echo $data['teacher']['id']; ?>/<?php echo $data['profile']['national_card_image']; ?>" 
-                                                 class="file-preview" id="national_card_preview" alt="کارت ملی"
-                                                 onclick="showImageModal(this.src)">
-                                        </div>
-                                    <?php else: ?>
-                                        <div class="mt-2">
-                                            <div class="file-placeholder" id="national_card_placeholder" onclick="document.getElementById('national_card_input').click()">
-                                                <i class="bi bi-card-image upload-icon"></i>
-                                            </div>
-                                            <img src="" class="file-preview" id="national_card_preview" alt="کارت ملی"
-                                                 onclick="showImageModal(this.src)" style="display: none;">
-                                        </div>
-                                    <?php endif; ?>
-                                    <div class="error-message" id="national_card_error"></div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label file-required">تصویر شناسنامه</label>
-                                    <input type="file" name="birth_certificate_image" class="form-control" accept="image/*" onchange="previewImage(this, 'birth_certificate_preview', 'birth_certificate_placeholder')" id="birth_certificate_input" required>
-                                    <?php if (!empty($data['profile']['birth_certificate_image'])): ?>
-                                        <div class="mt-2">
-                                            <img src="uploads/teachers/<?php echo $data['teacher']['id']; ?>/<?php echo $data['profile']['birth_certificate_image']; ?>" 
-                                                 class="file-preview" id="birth_certificate_preview" alt="شناسنامه"
-                                                 onclick="showImageModal(this.src)">
-                                        </div>
-                                    <?php else: ?>
-                                        <div class="mt-2">
-                                            <div class="file-placeholder" id="birth_certificate_placeholder" onclick="document.getElementById('birth_certificate_input').click()">
-                                                <i class="bi bi-file-earmark-image upload-icon"></i>
-                                            </div>
-                                            <img src="" class="file-preview" id="birth_certificate_preview" alt="شناسنامه"
-                                                 onclick="showImageModal(this.src)" style="display: none;">
-                                        </div>
-                                    <?php endif; ?>
-                                    <div class="error-message" id="birth_certificate_error"></div>
-                                </div>
+                              <!-- در بخش کارت ملی -->
+<div class="col-md-6 mb-3">
+    <label class="form-label file-required">تصویر کارت ملی</label>
+    <input type="file" name="national_card_image" class="form-control" accept="image/*" onchange="previewImage(this, 'national_card_preview', 'national_card_placeholder')" id="national_card_input">
+    <?php if (!empty($data['profile']['national_card_image']) && file_exists('uploads/teachers/' . $data['teacher']['id'] . '/' . $data['profile']['national_card_image'])): ?>
+        <div class="mt-2">
+            <img src="<?php echo BASE_URL . 'uploads/teachers/' . $data['teacher']['id'] . '/' . $data['profile']['national_card_image']; ?>" 
+                 class="file-preview" id="national_card_preview" alt="کارت ملی"
+                 onclick="showImageModal(this.src)">
+        </div>
+    <?php else: ?>
+        <div class="mt-2">
+            <div class="file-placeholder" id="national_card_placeholder" onclick="document.getElementById('national_card_input').click()">
+                <i class="bi bi-card-image upload-icon"></i>
+            </div>
+            <img src="" class="file-preview" id="national_card_preview" alt="کارت ملی"
+                 onclick="showImageModal(this.src)" style="display: none;">
+        </div>
+    <?php endif; ?>
+    <div class="error-message" id="national_card_error"></div>
+</div>
+                              <!-- در بخش شناسنامه -->
+<div class="col-md-6 mb-3">
+    <label class="form-label file-required">تصویر شناسنامه</label>
+    <input type="file" name="birth_certificate_image" class="form-control" accept="image/*" onchange="previewImage(this, 'birth_certificate_preview', 'birth_certificate_placeholder')" id="birth_certificate_input">
+    <?php if (!empty($data['profile']['birth_certificate_image']) && file_exists('uploads/teachers/' . $data['teacher']['id'] . '/' . $data['profile']['birth_certificate_image'])): ?>
+        <div class="mt-2">
+            <img src="<?php echo BASE_URL . 'uploads/teachers/' . $data['teacher']['id'] . '/' . $data['profile']['birth_certificate_image']; ?>" 
+                 class="file-preview" id="birth_certificate_preview" alt="شناسنامه"
+                 onclick="showImageModal(this.src)">
+        </div>
+    <?php else: ?>
+        <div class="mt-2">
+            <div class="file-placeholder" id="birth_certificate_placeholder" onclick="document.getElementById('birth_certificate_input').click()">
+                <i class="bi bi-file-earmark-image upload-icon"></i>
+            </div>
+            <img src="" class="file-preview" id="birth_certificate_preview" alt="شناسنامه"
+                 onclick="showImageModal(this.src)" style="display: none;">
+        </div>
+    <?php endif; ?>
+    <div class="error-message" id="birth_certificate_error"></div>
+</div>
                             </div>
                             
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label file-required">فایل PDF حکم کارگزینی</label>
-                                    <input type="file" name="decree_file" class="form-control" accept=".pdf" id="decree_input" required>
-                                    <?php if (!empty($data['profile']['decree_file'])): ?>
-                                        <div class="mt-2">
-                                            <a href="uploads/teachers/<?php echo $data['teacher']['id']; ?>/<?php echo $data['profile']['decree_file']; ?>" 
-                                               target="_blank" class="btn btn-sm btn-outline-primary">
-                                                مشاهده حکم
-                                            </a>
-                                        </div>
-                                    <?php endif; ?>
-                                    <div class="error-message" id="decree_error"></div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">فرم خلاصه سوابق (PDF)</label>
-                                    <input type="file" name="resume_file" class="form-control" accept=".pdf" id="resume_input">
-                                    <div class="retired-checkbox">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="is_retired_checkbox" id="is_retired_checkbox" 
-                                                   <?php echo ($data['profile']['is_retired'] ?? 0) ? 'checked' : ''; ?>
-                                                   onchange="toggleResumeRequired()">
-                                            <label class="form-check-label" for="is_retired_checkbox">
-                                                <i class="bi bi-person-check text-warning"></i> بازنشسته هستم
-                                            </label>
-                                        </div>
-                                    </div>
+                     <!-- در بخش فایل‌های PDF -->
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label file-required">فایل PDF حکم کارگزینی</label>
+        <input type="file" name="decree_file" class="form-control" accept=".pdf" id="decree_input">
+        <?php if (!empty($data['profile']['decree_file']) && file_exists('uploads/teachers/' . $data['teacher']['id'] . '/' . $data['profile']['decree_file'])): ?>
+            <div class="mt-2">
+                <a href="<?php echo BASE_URL . 'uploads/teachers/' . $data['teacher']['id'] . '/' . $data['profile']['decree_file']; ?>" 
+                   target="_blank" class="btn btn-sm btn-outline-primary">
+                    مشاهده حکم
+                </a>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFile('decree_file')">
+                    <i class="bi bi-trash"></i> حذف
+                </button>
+            </div>
+        <?php endif; ?>
+        <div class="error-message" id="decree_error"></div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label class="form-label">فرم خلاصه سوابق (PDF)</label>
+        <input type="file" name="resume_file" class="form-control" accept=".pdf" id="resume_input">
+        <?php if (!empty($data['profile']['resume_file']) && file_exists('uploads/teachers/' . $data['teacher']['id'] . '/' . $data['profile']['resume_file'])): ?>
+            <div class="mt-2">
+                <a href="<?php echo BASE_URL . 'uploads/teachers/' . $data['teacher']['id'] . '/' . $data['profile']['resume_file']; ?>" 
+                   target="_blank" class="btn btn-sm btn-outline-primary">
+                    مشاهده سوابق
+                </a>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFile('resume_file')">
+                    <i class="bi bi-trash"></i> حذف
+                </button>
+            </div>
+        <?php endif; ?>
+        <div class="retired-checkbox">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="is_retired_checkbox" id="is_retired_checkbox" 
+                       <?php echo ($data['profile']['is_retired'] ?? 0) ? 'checked' : ''; ?>
+                       onchange="toggleResumeRequired()">
+                <label class="form-check-label" for="is_retired_checkbox">
+                    <i class="bi bi-person-check text-warning"></i> بازنشسته هستم
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
                                     <?php if (!empty($data['profile']['resume_file'])): ?>
                                         <div class="mt-2">
                                             <a href="uploads/teachers/<?php echo $data['teacher']['id']; ?>/<?php echo $data['profile']['resume_file']; ?>" 
@@ -551,7 +571,7 @@
             }
         });
         
-        // تنظیم اولیه وضعیت فایل سوابق بر اساس وضعیت فعلی
+        // تنظیم اولیه وضعیت فایل سوابق
         toggleResumeRequired();
     });
 
@@ -596,19 +616,17 @@
         const resumeInput = document.getElementById('resume_input');
         
         if (isRetiredCheckbox.checked) {
-            // اگر تیک زده شد، فایل سوابق غیراجباری و مقدار 1
             resumeInput.required = false;
             resumeInput.removeAttribute('required');
             isRetiredHidden.value = "1";
         } else {
-            // اگر تیک زده نشد، فایل سوابق اجباری و مقدار 0
             resumeInput.required = true;
             resumeInput.setAttribute('required', 'required');
             isRetiredHidden.value = "0";
         }
         
         console.log('Is Retired Checkbox:', isRetiredCheckbox.checked);
-        console.log('Is Retired Hidden Value:', isRetiredHidden.value);
+        console.log('Is Retired Hidden:', isRetiredHidden.value);
     }
 
     // اعتبارسنجی شماره شبا
@@ -634,59 +652,135 @@
     }
 
     // اعتبارسنجی فایل‌های اجباری
-    function validateRequiredFiles() {
-        let isValid = true;
-
-        // عکس پروفایل
-        const profileImage = document.getElementById('profile_image');
-        if (!profileImage.files[0]) {
-            document.getElementById('profile_image_error').textContent = 'عکس پروفایل الزامی است';
-            document.getElementById('profile_image_error').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('profile_image_error').style.display = 'none';
+// حذف فایل
+function removeFile(fieldName) {
+    if (confirm('آیا از حذف این فایل اطمینان دارید؟')) {
+        // ایجاد یک فیلد مخفی برای نشان‌گذاری حذف فایل
+        let hiddenInput = document.getElementById('remove_' + fieldName);
+        if (!hiddenInput) {
+            hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'remove_' + fieldName;
+            hiddenInput.id = 'remove_' + fieldName;
+            hiddenInput.value = '1';
+            document.getElementById('profileForm').appendChild(hiddenInput);
         }
-
-        // کارت ملی
-        const nationalCard = document.getElementById('national_card_input');
-        if (!nationalCard.files[0]) {
-            document.getElementById('national_card_error').textContent = 'تصویر کارت ملی الزامی است';
-            document.getElementById('national_card_error').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('national_card_error').style.display = 'none';
+        
+        // مخفی کردن فایل نمایش داده شده
+        const fileElement = document.getElementById(fieldName + '_preview');
+        const placeholder = document.getElementById(fieldName + '_placeholder');
+        const fileInput = document.getElementById(fieldName + '_input');
+        
+        if (fileElement) fileElement.style.display = 'none';
+        if (placeholder) placeholder.style.display = 'flex';
+        if (fileInput) fileInput.value = '';
+        
+        // برای فایل‌های PDF، مخفی کردن لینک مشاهده
+        const viewLink = document.querySelector('a[href*="' + fieldName + '"]');
+        if (viewLink) {
+            viewLink.parentElement.style.display = 'none';
         }
-
-        // شناسنامه
-        const birthCertificate = document.getElementById('birth_certificate_input');
-        if (!birthCertificate.files[0]) {
-            document.getElementById('birth_certificate_error').textContent = 'تصویر شناسنامه الزامی است';
-            document.getElementById('birth_certificate_error').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('birth_certificate_error').style.display = 'none';
-        }
-
-        // حکم کارگزینی
-        const decreeFile = document.getElementById('decree_input');
-        if (!decreeFile.files[0]) {
-            document.getElementById('decree_error').textContent = 'فایل حکم کارگزینی الزامی است';
-            document.getElementById('decree_error').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('decree_error').style.display = 'none';
-        }
-
-        // سوابق (فقط اگر بازنشسته نیست)
-        const isRetired = document.getElementById('is_retired_checkbox').checked;
-        const resumeFile = document.getElementById('resume_input');
-        if (!isRetired && !resumeFile.files[0]) {
-            alert('فایل خلاصه سوابق برای پرسنل فعال الزامی است');
-            isValid = false;
-        }
-
-        return isValid;
     }
+}
+
+// پیش‌نمایش عکس - نسخه بهبود یافته
+function previewImage(input, previewId, placeholderId) {
+    const file = input.files[0];
+    if (!file) return;
+
+    // بررسی حجم فایل (حداکثر 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+        alert('حجم فایل نباید بیشتر از 2 مگابایت باشد');
+        input.value = '';
+        return;
+    }
+
+    const preview = document.getElementById(previewId);
+    const placeholder = document.getElementById(placeholderId);
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        if (placeholder) {
+            placeholder.style.display = 'none';
+        }
+        
+        // حذف علامت حذف فایل اگر وجود دارد
+        const fieldName = input.name;
+        const removeInput = document.getElementById('remove_' + fieldName);
+        if (removeInput) {
+            removeInput.remove();
+        }
+    }
+    
+    reader.readAsDataURL(file);
+}
+
+// اعتبارسنجی فایل‌های اجباری - نسخه بهبود یافته
+function validateRequiredFiles() {
+    let isValid = true;
+
+    // عکس پروفایل
+    const profileImage = document.getElementById('profile_image');
+    const hasProfileImage = profileImage.files[0] || <?php echo !empty($data['profile']['profile_image']) ? 'true' : 'false'; ?>;
+    
+    if (!hasProfileImage) {
+        document.getElementById('profile_image_error').textContent = 'عکس پروفایل الزامی است';
+        document.getElementById('profile_image_error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('profile_image_error').style.display = 'none';
+    }
+
+    // کارت ملی
+    const nationalCard = document.getElementById('national_card_input');
+    const hasNationalCard = nationalCard.files[0] || <?php echo !empty($data['profile']['national_card_image']) ? 'true' : 'false'; ?>;
+    
+    if (!hasNationalCard) {
+        document.getElementById('national_card_error').textContent = 'تصویر کارت ملی الزامی است';
+        document.getElementById('national_card_error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('national_card_error').style.display = 'none';
+    }
+
+    // شناسنامه
+    const birthCertificate = document.getElementById('birth_certificate_input');
+    const hasBirthCertificate = birthCertificate.files[0] || <?php echo !empty($data['profile']['birth_certificate_image']) ? 'true' : 'false'; ?>;
+    
+    if (!hasBirthCertificate) {
+        document.getElementById('birth_certificate_error').textContent = 'تصویر شناسنامه الزامی است';
+        document.getElementById('birth_certificate_error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('birth_certificate_error').style.display = 'none';
+    }
+
+    // حکم کارگزینی
+    const decreeFile = document.getElementById('decree_input');
+    const hasDecreeFile = decreeFile.files[0] || <?php echo !empty($data['profile']['decree_file']) ? 'true' : 'false'; ?>;
+    
+    if (!hasDecreeFile) {
+        document.getElementById('decree_error').textContent = 'فایل حکم کارگزینی الزامی است';
+        document.getElementById('decree_error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('decree_error').style.display = 'none';
+    }
+
+    // سوابق (فقط اگر بازنشسته نیست)
+    const isRetired = document.getElementById('is_retired_checkbox').checked;
+    const resumeFile = document.getElementById('resume_input');
+    const hasResumeFile = resumeFile.files[0] || <?php echo !empty($data['profile']['resume_file']) ? 'true' : 'false'; ?>;
+    
+    if (!isRetired && !hasResumeFile) {
+        alert('فایل خلاصه سوابق برای پرسنل فعال الزامی است');
+        isValid = false;
+    }
+
+    return isValid;
+}
 
     // اعتبارسنجی کلی فرم
     function validateForm() {
@@ -740,8 +834,7 @@
             // دیباگ نهایی
             console.log('=== FINAL FORM DATA ===');
             console.log('Birth Date:', $('#birth_date').val());
-            console.log('Is Retired Hidden Value:', document.getElementById('is_retired_hidden').value);
-            console.log('Is Retired Checkbox:', document.getElementById('is_retired_checkbox').checked);
+            console.log('Is Retired:', document.getElementById('is_retired_hidden').value);
             
             showLoading();
             return true;
@@ -801,23 +894,15 @@
         if (jalaliDateInput.val()) {
             jalaliDateInput.val(convertToPersianNumbers(jalaliDateInput.val()));
         }
-
-        // اطمینان از مقدار اولیه فیلد مخفی
-        const isRetiredHidden = document.getElementById('is_retired_hidden');
-        const isRetiredCheckbox = document.getElementById('is_retired_checkbox');
-        
-        if (!isRetiredCheckbox.checked) {
-            isRetiredHidden.value = "0";
-        }
-        
-        console.log('Initial Is Retired Hidden:', isRetiredHidden.value);
-        console.log('Initial Is Retired Checkbox:', isRetiredCheckbox.checked);
     });
 
     // محدودیت ورود فقط عدد برای فیلدهای عددی
     $('.english-number').on('input', function() {
         this.value = this.value.replace(/[^0-9۰-۹]/g, '');
     });
+
+
+    
     </script>
 </body>
 </html>

@@ -43,14 +43,7 @@ class App {
         if (isset($_GET['url'])) {
             $url = rtrim($_GET['url'], '/');
             $url = filter_var($url, FILTER_SANITIZE_URL);
-            $url_parts = explode('/', $url);
-            
-            // 🔥 اضافه کردن این بخش برای رفع مشکل routing
-            if (count($url_parts) == 2 && $url_parts[0] == 'assistant' && $url_parts[1] == 'addStudent') {
-                return $url_parts;
-            }
-            
-            return $url_parts;
+            return explode('/', $url);
         }
         return [];
     }

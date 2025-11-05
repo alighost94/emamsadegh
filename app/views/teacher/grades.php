@@ -294,18 +294,17 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <i class="bi bi-person-circle text-muted me-2"></i>
-                                                            <!-- 🔥 این خط رو تصحیح کردم -->
-                                                            <?php echo $grade['student_name'] ?? (($grade['first_name'] ?? '') . ' ' . ($grade['last_name'] ?? '')) ?: 'نامشخص'; ?>
+                                                            <?php echo $grade['first_name'] . ' ' . $grade['last_name']; ?>
                                                         </div>
                                                     </td>
-                                                    <td><?php echo $grade['student_number'] ?? '---'; ?></td>
+                                                    <td><?php echo $grade['student_number']; ?></td>
                                                     <td>
-                                                        <span class="class-badge"><?php echo $grade['class_name'] ?? '---'; ?></span>
+                                                        <span class="class-badge"><?php echo $grade['class_name']; ?></span>
                                                     </td>
                                                     <?php if ($data['course_type'] == 'poodmani'): ?>
                                                         <?php for ($i = 1; $i <= 5; $i++): ?>
                                                             <td>
-                                                                <?php if (isset($grade['poodman' . $i]) && $grade['poodman' . $i] !== null): ?>
+                                                                <?php if (isset($grade['poodman' . $i])): ?>
                                                                     <span class="badge bg-<?php echo $grade['poodman' . $i] >= 10 ? 'success' : 'danger'; ?>">
                                                                         <?php echo $grade['poodman' . $i]; ?>
                                                                     </span>
@@ -316,7 +315,7 @@
                                                         <?php endfor; ?>
                                                     <?php else: ?>
                                                         <td>
-                                                            <?php if (isset($grade['continuous1']) && $grade['continuous1'] !== null): ?>
+                                                            <?php if (isset($grade['continuous1'])): ?>
                                                                 <span class="badge bg-<?php echo $grade['continuous1'] >= 10 ? 'success' : 'danger'; ?>">
                                                                     <?php echo $grade['continuous1']; ?>
                                                                 </span>
@@ -325,7 +324,7 @@
                                                             <?php endif; ?>
                                                         </td>
                                                         <td>
-                                                            <?php if (isset($grade['term1']) && $grade['term1'] !== null): ?>
+                                                            <?php if (isset($grade['term1'])): ?>
                                                                 <span class="badge bg-<?php echo $grade['term1'] >= 10 ? 'success' : 'danger'; ?>">
                                                                     <?php echo $grade['term1']; ?>
                                                                 </span>
@@ -334,7 +333,7 @@
                                                             <?php endif; ?>
                                                         </td>
                                                         <td>
-                                                            <?php if (isset($grade['continuous2']) && $grade['continuous2'] !== null): ?>
+                                                            <?php if (isset($grade['continuous2'])): ?>
                                                                 <span class="badge bg-<?php echo $grade['continuous2'] >= 10 ? 'success' : 'danger'; ?>">
                                                                     <?php echo $grade['continuous2']; ?>
                                                                 </span>
@@ -343,7 +342,7 @@
                                                             <?php endif; ?>
                                                         </td>
                                                         <td>
-                                                            <?php if (isset($grade['term2']) && $grade['term2'] !== null): ?>
+                                                            <?php if (isset($grade['term2'])): ?>
                                                                 <span class="badge bg-<?php echo $grade['term2'] >= 10 ? 'success' : 'danger'; ?>">
                                                                     <?php echo $grade['term2']; ?>
                                                                 </span>
@@ -354,10 +353,7 @@
                                                     <?php endif; ?>
                                                     <td>
                                                         <small class="text-muted">
-                                                            <?php 
-                                                            $date = $grade['updated_at'] ?? $grade['created_at'] ?? '---';
-                                                            echo $date !== '---' ? date('Y/m/d H:i', strtotime($date)) : '---'; 
-                                                            ?>
+                                                            <?php echo date('Y/m/d H:i', strtotime($grade['updated_at'])); ?>
                                                         </small>
                                                     </td>
                                                 </tr>

@@ -85,45 +85,46 @@ class User extends Model {
         $stmt->execute();
     }
     
-    public function create($data) {
-        try {
-            $this->db->beginTransaction();
-            
-            // ایجاد کاربر در جدول users
-            $query = "INSERT INTO users (mobile, national_code, password, role_id, first_name, last_name) 
-                      VALUES (?, ?, ?, ?, ?, ?)";
-            $stmt = $this->db->prepare($query);
-            
-            // 🔥 تغییر اینجا - هش کردن رمز عبور
-            $password = password_hash($data['national_code'], PASSWORD_DEFAULT);
-            
-            $stmt->execute([
-                $data['mobile'],
-                $data['national_code'],
-                $password, // 🔥 حالا هش شده است
-                $data['role_id'],
-                $data['first_name'],
-                $data['last_name']
-            ]);
-            
-            $user_id = $this->db->lastInsertId();
-            
-            // ایجاد رکورد در جدول مربوطه بر اساس نقش
-            $role_created = $this->createRoleSpecificRecord($user_id, $data['role_id'], $data);
-            
-            if ($role_created) {
-                $this->db->commit();
-                return true;
-            } else {
-                $this->db->rollBack();
-                return false;
-            }
-            
-        } catch (Exception $e) {
+public function create($data) {
+    try {
+        $this->db->beginTransaction();
+        
+        // ایجاد کاربر در جدول users
+        $query = "INSERT INTO users (mobile, national_code, password, role_id, first_name, last_name) 
+                  VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $this->db->prepare($query);
+        
+        // 🔥 تغییر اینجا - هش کردن رمز عبور
+        $password = password_hash($data['national_code'], PASSWORD_DEFAULT);
+        
+        $stmt->execute([
+            $data['mobile'],
+            $data['national_code'],
+            $password, // 🔥 حالا هش شده است
+            $data['role_id'],
+            $data['first_name'],
+            $data['last_name']
+        ]);
+        
+        $user_id = $this->db->lastInsertId();
+        
+        // ایجاد رکورد در جدول مربوطه بر اساس نقش
+        $role_created = $this->createRoleSpecificRecord($user_id, $data['role_id'], $data);
+        
+        if ($role_created) {
+            $this->db->commit();
+            return true;
+        } else {
             $this->db->rollBack();
             return false;
         }
+        
+    } catch (Exception $e) {
+        $this->db->rollBack();
+        return false;
     }
+}
+    
     private function createRoleSpecificRecord($user_id, $role_id, $data) {
         switch ($role_id) {
             case 2: // دانش‌آموز
